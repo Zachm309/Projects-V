@@ -8,13 +8,15 @@
 ############################
 
 import cv2
+import time
+from PreProcessing.pre_Process import convert_to_grayscale, apply_gaussian_blur
+from ImageProcessing.Process_Image import detect_edges, analyze_image_segments, count_white_pixels
+from postProcessing.post_Process import display_image
 
-from PreProcessing.pre_process import convert_to_grayscale, apply_gaussian_blur
-from ImageProcessing.Process_Image import detect_edges, find_contours, draw_curves
-from PostProcessing.PreProcessing import display_image, log_detection_info
 
 def main():
     cap = cv2.VideoCapture(0)
+    last_print_time = time.time()
 
     while True:
         ret, img = cap.read()
@@ -27,17 +29,17 @@ def main():
 
         #IMAGE PROCESSING
         edges = detect_edges(blurred)
-        contours = find_contours(edges)
+
+        if time.time() - last_print_time >= 1:
+            analyze_image_segments(edges)
+            last_print_time = time.time()
 
         #POST-PROCESSING
         output_image = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)
-        for contour in contours:
-            output_image = draw_curves(output_image, contour)
     
         display_image(output_image, "Edge Detection with curved")
-        log_detection_info(contours)
 
-        if cv2.waitkey(1) == 13:
+        if cv2.waitKey(1) == 13:
             break
 
     cap.release()

@@ -11,7 +11,10 @@ import cv2
 
 #Display image in window
 def display_image(image, window_name="Image"):
-    cv2.imshow(window_name,image)
+    if image is not None and image.size > 0:
+        cv2.imshow(window_name,image)
+    else:
+        print("Image showing error")
 
 #log information about detected lines or curved
 def log_detection_info(contours):
