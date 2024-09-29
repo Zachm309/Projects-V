@@ -1,0 +1,147 @@
+Server Set up:
+
+gcc client.c -o client
+
+gcc server.c -o server 
+./server 8080 // ./server IP
+
+
+Client Set up
+
+./client 127.0.0.1 8080 // ./client IP
+
+
+
+//Cable Set up
+
+make sure com port is connected to real port on windows device
+
+cd /dev 
+ls -l
+find your specific tty[related to your com port under device manager]
+sudo dmesg | grep tty
+Related Result now is supposed to be put into the serial port simple example line 24 changed to your real TTY number
+
+
+USEFUL COMMANDS TERMINAL
+
+1. File and Directory Management
+Command	Description
+ls	List files and directories in the current directory.
+cd <directory>	Change to a different directory.
+pwd	Print the current working directory path.
+mkdir <directory>	Create a new directory.
+rmdir <directory>	Remove an empty directory.
+rm <file>	Remove a file.
+rm -r <directory>	Remove a directory and its contents recursively.
+cp <source> <destination>	Copy files or directories.
+mv <source> <destination>	Move (rename) files or directories.
+touch <file>	Create a new empty file or update the timestamp of an existing file.
+cat <file>	Display the contents of a file.
+nano <file>	Edit a file using the nano text editor.
+less <file>	View a file one screen at a time.
+find <path> -name <pattern>	Search for files and directories.
+locate <file>	Find the location of a file quickly (uses a database).
+
+2. File Permissions and Ownership
+Command	Description
+chmod <permissions> <file>	Change file permissions (e.g., chmod 755 file).
+chown <user>:<group> <file>	Change the owner and group of a file or directory.
+chgrp <group> <file>	Change the group ownership of a file.
+umask	View or set default file permissions for newly created files.
+
+3. File Compression and Archiving
+Command	Description
+tar -cvf <archive>.tar <directory>	Create a tar archive.
+tar -xvf <archive>.tar	Extract a tar archive.
+gzip <file>	Compress a file using gzip.
+gunzip <file>.gz	Decompress a .gz file.
+zip <archive>.zip <files>	Create a zip archive.
+unzip <archive>.zip	Extract a zip archive.
+
+4. System Information and Monitoring
+Command	Description
+top	Display real-time system processes.
+htop	Interactive process viewer (if installed).
+ps aux	List all running processes.
+df -h	Display disk space usage.
+du -sh <directory>	Show the size of a directory.
+free -h	Display memory usage.
+uname -r	Show the kernel version.
+uptime	Show how long the system has been running.
+whoami	Show the current logged-in user.
+lscpu	Display CPU architecture information.
+lsblk	List block devices (disks).
+ifconfig	Display network interface information.
+ip addr	Show IP addresses for network interfaces.
+ping <host>	Test network connection to a host.
+netstat -tuln	Display listening ports and services.
+systemctl status <service>	Check the status of a service (e.g., systemctl status ssh).
+
+5. Package Management
+Command	Description
+apt update	Update the package list (Debian/Ubuntu).
+apt upgrade	Upgrade installed packages (Debian/Ubuntu).
+apt install <package>	Install a package (Debian/Ubuntu).
+yum install <package>	Install a package (RedHat/CentOS).
+dpkg -i <package.deb>	Install a .deb package manually.
+rpm -i <package.rpm>	Install an .rpm package manually.
+
+6. Process Management
+Command	Description
+kill <PID>	Terminate a process by PID.
+killall <process-name>	Kill all processes by name.
+pkill <process-name>	Send signals to processes by name (e.g., pkill -9 <name> to forcefully terminate).
+jobs	List running background jobs.
+fg <job-id>	Bring a background job to the foreground.
+
+bg <job-id>	Send a job to the background.
+7. User and Group Management
+Command	Description
+adduser <username>	Add a new user (Debian/Ubuntu).
+useradd <username>	Add a new user (RedHat/CentOS).
+deluser <username>	Remove a user (Debian/Ubuntu).
+usermod -aG <group> <username>	Add a user to a group.
+passwd <username>	Change the password for a user.
+groupadd <group>	Create a new group.
+groups <username>	Show the groups a user belongs to.
+
+8. Networking
+Command	Description
+ping <address>	Check if a host is reachable.
+curl <url>	Make a web request from the terminal (fetches data from URLs).
+wget <url>	Download files from the web.
+scp <source> <user>@<host>:<destination>	Securely copy files between systems.
+ssh <user>@<host>	Securely connect to a remote machine.
+traceroute <host>	Show the path packets take to reach a host.
+nmap <host>	Scan for open ports on a host.
+hostname	Show or set the system's hostname.
+
+9. Text and Data Manipulation
+Command	Description
+grep <pattern> <file>	Search for a pattern in a file.
+sed 's/<old>/<new>/g' <file>	Replace text in a file using regular expressions.
+awk '{print $1}' <file>	Process and extract data from text files.
+sort <file>	Sort the lines in a file.
+uniq	Remove duplicate lines from a file.
+wc -l <file>	Count lines in a file.
+cut -d' ' -f1 <file>	Extract a specific field from a text file.
+head <file>	View the first few lines of a file.
+tail <file>	View the last few lines of a file.
+tee <file>	Read from standard input and write to a file and the terminal.
+
+10. File Permissions
+Command	Description
+ls -l	Show detailed information about files, including permissions.
+chmod u+x <file>	Make a file executable by the user.
+chmod -R 755 <directory>	Recursively set permissions for files and directories.
+11. Other Useful Commands
+Command	Description
+alias <name>='<command>'	Create a shortcut for a command (e.g., alias ll='ls -la').
+history	Display command history.
+clear	Clear the terminal screen.
+man <command>	Show the manual page for a command (e.g., man ls).
+echo <text>	Print text to the terminal.
+date	Display the current date and time.
+cal	Show the calendar for the current month.
+sleep <seconds>	Pause execution for a specified time.
