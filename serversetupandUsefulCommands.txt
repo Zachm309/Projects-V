@@ -11,6 +11,8 @@ Client Set up
 ./client 127.0.0.1 8080 // ./client IP
 
 
+Zach pi IP: 192.168.1.226
+
 
 //Cable Set up
 
@@ -135,6 +137,7 @@ Command	Description
 ls -l	Show detailed information about files, including permissions.
 chmod u+x <file>	Make a file executable by the user.
 chmod -R 755 <directory>	Recursively set permissions for files and directories.
+
 11. Other Useful Commands
 Command	Description
 alias <name>='<command>'	Create a shortcut for a command (e.g., alias ll='ls -la').
@@ -145,3 +148,35 @@ echo <text>	Print text to the terminal.
 date	Display the current date and time.
 cal	Show the calendar for the current month.
 sleep <seconds>	Pause execution for a specified time.
+
+11. GIT commands for linux
+
+git status
+//check status of repository
+
+got add .
+//Add all modified files
+
+git commit -m "Fixed bugs with edge detection algorithm"
+//commit changes with message
+
+git push origin main
+//push to main branch
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
