@@ -1,1 +1,9 @@
+known bugs and set up
+
+set up server without an IP just do normal comp and execute and pick a comm port ./server 8080
+
+client you must set to IP of PI on same network and initialize the same port number
+
+BUGS: print statement in client becomes unresponsive and second command given will return blank, all following commands work
+
 
