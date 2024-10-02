@@ -7,3 +7,15 @@ client you must set to IP of PI on same network and initialize the same port num
 BUGS: print statement in client becomes unresponsive and second command given will return blank, all following commands work
 
 
+for true IP
+
+sudo apt update 
+sudo apt install net-tools 
+
+ifconfig
+
+ip addr show
+
+look for inet or wlan0
+
+ie 1inet 96.168.2.86/24 brd  everything after and including the slash ignore and thats your ip
