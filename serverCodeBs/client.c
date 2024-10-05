@@ -7,7 +7,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#define SERVER_IP "192.168.1.226"
+#define SERVER_IP "192.168.1.226" //change this if working from home
 #define SERVER_PORT 8080
 
 char buffer[BUFSIZ];
