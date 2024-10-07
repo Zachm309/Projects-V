@@ -13,6 +13,7 @@ from PreProcessing.pre_Process import convert_to_grayscale, apply_gaussian_blur
 from ImageProcessing.Process_Image import detect_edges, analyze_image_segments, count_white_pixels
 from postProcessing.post_Process import display_image
 from flask import Flask,render_template,Response
+from werkzeug.serving import run_simple
 import threading
 
 
@@ -75,7 +76,7 @@ def main():
     cv2.destroyAllWindows()
 
 def run_flask():
-    app.run(debug=True, use_reloader=False)
+    app.run(ssl_context=('cert.pem', 'key.pem'), debug=True, use_reloader=False)
 
 
 if __name__ == "__main__":
