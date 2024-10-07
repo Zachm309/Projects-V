@@ -12,10 +12,39 @@ import time
 from PreProcessing.pre_Process import convert_to_grayscale, apply_gaussian_blur
 from ImageProcessing.Process_Image import detect_edges, analyze_image_segments, count_white_pixels
 from postProcessing.post_Process import display_image
+from flask import Flask,render_template,Response
+import threading
 
+
+
+app=Flask(__name__)
+cap = cv2.VideoCapture(0)
+
+def generate_frames():
+    while True:
+
+        ## read the camera frame
+        success,frame=cap.read()
+        if not success:
+            break
+        else:
+            ret,buffer=cv2.imencode('.jpg',frame)
+            frame=buffer.tobytes()
+        
+        yield(b'--frame\r\n'
+                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/video')
+def video():
+    return Response(generate_frames(),mimetype='multipart/x-mixed-replace: boundry=frame')
 
 def main():
-    cap = cv2.VideoCapture(0)
+    
     last_print_time = time.time()
 
     while True:
@@ -45,5 +74,14 @@ def main():
     cap.release()
     cv2.destroyAllWindows()
 
+def run_flask():
+    app.run(debug=True, use_reloader=False)
+
+
 if __name__ == "__main__":
+    
+    flask_thread = threading.Thread(target=run_flask)
+    flask_thread.start()
+    
+    
     main()
