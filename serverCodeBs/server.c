@@ -33,7 +33,6 @@
 char buffer[BUFSIZ];
 char python_output[PYTHON_BUFFER];
 
-
 /*
  * this signal handler is used to catch the termination
  * of the child. Needed so that we can avoid wasting
@@ -53,7 +52,7 @@ int launch_stream() {
 	FILE *fp;
 	char command[BUFSIZ];
 	
-	snprintf(command, sizeof(command), "python3 /home/zpi/tests/Projects-V/CV-Code/main.py");
+	snprintf(command, sizeof(command), "python3 /home/zpi/projects/Projects-V/CV-Code/main.py");
 	
 	fp = popen(command, "r");
 	if (fp == NULL) {
@@ -105,9 +104,6 @@ int serial(const char *message) {
 	tty.c_cc[VTIME] = 10; // 1 second time
 	
 	
-	
-	//
-	
 	if (tcsetattr(serial_port, TCSANOW, &tty) != 0) {
 		printf("Error %i from tcsetattr: %s\n");
 		return -1;
@@ -126,6 +122,7 @@ int serial(const char *message) {
 
 int main (int argc, char *argv[])
 {
+	
         //my own server socket entity and alsso the client enitty im talking to
 	int server_socket, client_socket;
 	int client_len;
@@ -133,7 +130,6 @@ int main (int argc, char *argv[])
 	int len, i;
 	FILE *p;
         // ./server 8080
-	
         //init 
 	/*
 	 * install a signal handler for SIGCHILD (sent when the child terminates)
@@ -213,7 +209,7 @@ int main (int argc, char *argv[])
 			 * against 3 commands: date, who, df
 			 */
 			//printf("test3\n");
-			//memset(buffer, 0, BUFSIZ);
+			memset(buffer, 0, BUFSIZ);
 			read(client_socket, buffer, BUFSIZ);
 			//char ack_mesg[] = "message received~!";
 			//write(client_socket, ack_mesg, strlen(ack_mesg));
@@ -223,29 +219,13 @@ int main (int argc, char *argv[])
 			 */
 
 			//Chnage commands to what they actually do
-			if (strcmp (buffer, "W") == 0) {
-				strcpy (buffer, "forward\n");
-				len = strlen (buffer);
-				printf("Command:%s", buffer);
-			} else if (strcmp (buffer, "A") == 0) {
-				strcpy (buffer, "Left\n");
-				len = strlen (buffer);
-				printf("Command:%s", buffer);
-			} else if (strcmp (buffer, "S") == 0) {
-				strcpy (buffer, "Backwards\n");
-				len = strlen (buffer);
-				printf("Command:%s", buffer);
-			} else if (strcmp (buffer, "D") == 0) {
-				strcpy (buffer, "Right\n");
-				len = strlen (buffer);
-				printf("Command:%s", buffer);
-			} else if (strcmp (buffer, "stream") == 0) {
-				launch_stream();
-			} else {
-				strcpy (buffer, "invalid command\n");
-				len = strlen (buffer);
-				
-			}	/* endif */
+				/* endif */
+
+			printf("Command recived: %s",buffer);
+			
+			if (serial(buffer) != 0) {
+				printf("Failed to send serial command");
+			}
 
 			/*
 			 * write data to client, close socket, and exit child app
