@@ -10,6 +10,8 @@
 import cv2
 import numpy as np
 import time
+import sys
+sys.stdout.flush()
 
 
 
@@ -67,7 +69,8 @@ def highlight_sections(image, max_segment):
         top_left = (0, 0)
         bottom_right = (width, height // 2)
     
-    
+    time.sleep(0.5)
+    print("Direction:", max_segment, flush=True)
     
     cv2.rectangle(highlighted_image, top_left, bottom_right, color, thickness)
     
