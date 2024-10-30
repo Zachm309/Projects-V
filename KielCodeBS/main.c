@@ -47,110 +47,107 @@ for(;;) {
     // Input command from user to either switch modes or control the motors/servos
     inputCommand = UARTgetcND();
     RCServo_SetAngle(defaultAngle);
-    // Mode switching logic
-    if(inputCommand == 'm') {
-        mode = 'm'; // Switch to motor mode
-        UARTprintf("Motor mode selected.\n");
-    } else if (inputCommand == 's') {
-        mode = 's'; // Switch to stepper mode
-        UARTprintf("Stepper mode selected.\n");
-    }
-    
     // Motor mode
-    if (mode == 'm') {
 			//UARTprintf("MotorLoop");
         switch(inputCommand) {
-            case 'y': // L FWD
+		case 'W':
+		SetMotorSpeed(LEFT_MOTOR, 750);
+		SetMotorSpeed(RIGHT_MOTOR, 750);
+		SetMotorDir(LEFT_MOTOR, MOTOR_FWD);
+		SetMotorDir(RIGHT_MOTOR, MOTOR_FWD);
+			
+		case 'A':
+		SetMotorSpeed(LEFT_MOTOR, 0);
+		SetMotorSpeed(RIGHT_MOTOR, 750);
+		SetMotorDir(RIGHT_MOTOR, MOTOR_FWD);
+		
+		case 'D':
+		SetMotorSpeed(LEFT_MOTOR, 750);
+		SetMotorSpeed(RIGHT_MOTOR, 0);
+		SetMotorDir(RIGHT_MOTOR, MOTOR_FWD);
+		case 'S':
+		SetMotorSpeed(RIGHT_MOTOR, 0);
+		SetMotorSpeed(RIGHT_MOTOR, 0);
+		
+		case 'y': // L FWD
                 SetMotorSpeed(LEFT_MOTOR, 750);
                 SetMotorDir(LEFT_MOTOR, MOTOR_FWD);
                 UARTprintf("Left Wheel Forward\n");
                 break;
             
-            case 'h': // L STOP
+            	case 'h': // L STOP
                 SetMotorSpeed(LEFT_MOTOR, 0);
                 SetMotorDir(LEFT_MOTOR, MOTOR_STOP);
                 break;
             
-            case 'n': // L RWD
+           	 case 'n': // L RWD
                 SetMotorSpeed(LEFT_MOTOR, 750);
                 SetMotorDir(LEFT_MOTOR, MOTOR_RWD);
                 UARTprintf("Left Wheel Backwards\n");
                 break;
             
-            case 'u': // R FWD
+            	case 'u': // R FWD
                 SetMotorSpeed(RIGHT_MOTOR, 750);
                 SetMotorDir(RIGHT_MOTOR, MOTOR_FWD);
                 UARTprintf("Right Wheel Forward\n");
                 break;
             
-            case 'j': // R STOP
+            	case 'j': // R STOP
                 SetMotorSpeed(RIGHT_MOTOR, 0);
                 SetMotorDir(RIGHT_MOTOR, MOTOR_STOP);
                 break;
             
-            case 'k': // R RWD
+            	case 'k': // R RWD
                 SetMotorSpeed(RIGHT_MOTOR, 750);
                 SetMotorDir(RIGHT_MOTOR, MOTOR_RWD);
                 UARTprintf("Right Wheel Backwards\n");
                 break;
-						case 'r': // read encoder
-           Encoder_CalculateSpeed();
-				UARTprintf("\nValues: %d %d", Global_LeftEncoderPeriod, Global_RightEncoderPeriod);
-						break;
-        }
-    }
-    
+		
+	    	case 'r': // read encoder
+          	Encoder_CalculateSpeed();
+		UARTprintf("\nValues: %d %d", Global_LeftEncoderPeriod, Global_RightEncoderPeriod);
+		break;
     // Stepper mode
-    else if (mode == 's') {
 			//UARTprintf("loop");
-			Stepper_Step(stepType);
-        switch(inputCommand) {
-            case '0': // Stop stepper
+        	case '0': // Stop stepper
                 stepType = STEPPER_STEP_STOP;
                 UARTprintf("CMD STOP\n");
                 UARTprintf("Number: %d\n", stepType);
                 break;
                 
-            case '1': // Clockwise full step
+            	case '1': // Clockwise full step
                 stepType = STEPPER_STEP_CW_FULL;
                 UARTprintf("CMD CW F\n");
                 UARTprintf("Number: %d\n", stepType);
-              //  Stepper_Step(stepType);
                 break;
                 
-            case '2': // Counter-clockwise full step
+            	case '2': // Counter-clockwise full step
                 stepType = STEPPER_STEP_CCW_FULL;
                 UARTprintf("CMD CCW F\n");
                 UARTprintf("Number: %d\n", stepType);
-              //  Stepper_Step(stepType);
                 break;
                 
-            case '3': // Clockwise half step
+            	case '3': // Clockwise half step
                 stepType = STEPPER_STEP_CW_HALF;
                 UARTprintf("CMD CW H\n");
                 UARTprintf("Number: %d\n", stepType);
-               // Stepper_Step(stepType);
                 break;
                 
-            case '4': // Counter-clockwise half step
+            	case '4': // Counter-clockwise half step
                 stepType = STEPPER_STEP_CCW_HALF;
                 UARTprintf("CMD CCW H\n");
                 UARTprintf("Number: %d\n", stepType);
-               // Stepper_Step(stepType);
                 break;
 // Servo control
-            case 'w': // Increase servo angle
+            	case 'e': // Increase servo angle
                 defaultAngle += 3;
                 RCServo_SetAngle(defaultAngle);
                 break;
                 
-            case 'q': // Decrease servo angle
+            	case 'q': // Decrease servo angle
                 defaultAngle -= 3;
                 RCServo_SetAngle(defaultAngle);
                 break;
-        }
-
-    }
 
     Delay_ms(30); // Small delay to prevent overwhelming the system
     TOGGLE(); // Toggle LED or similar action to show the system is running
