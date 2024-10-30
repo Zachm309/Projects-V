@@ -50,25 +50,6 @@ void SigCatcher (int n)
 	signal (SIGCHLD, SigCatcher);
 }
 
-int launch_stream() {
-	
-	FILE *fp;
-	char command[BUFSIZ];
-	
-	snprintf(command, sizeof(command), "python3 /home/zpi/project/Projects-V/CV-Code/main.py");
-	
-	fp = popen(command, "r");
-	if (fp == NULL) {
-		printf("Failed to run python command\n");
-		return 1;	
-	} 
-	char output_line[BUFSIZ];
-	while (fgets(output_line, sizeof(output_line), fp) != NULL) {
-		printf("Python Script output: %s", output_line);
-	}
-	pclose(fp);
-}
-
 int serial(const char *message) {
 	
 	int serial_port = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY | O_NDELAY);
@@ -120,6 +101,43 @@ int serial(const char *message) {
 	close(serial_port);
 	return 0;
 }
+
+int launch_stream() {
+	
+	FILE *fp;
+	char command[PYTHON_BUFFER];
+
+	
+	fp = popen("python3 /home/zpi/project/Projects-V/CV-Code/main.py", "r");
+	if (fp == NULL) {
+		printf("Failed to run python command\n");
+		return 1;	
+	}
+	 
+	char output_line[PYTHON_BUFFER];
+	char max_segment[PYTHON_BUFFER];
+	
+	while (fgets(output_line, sizeof(output_line), fp) != NULL) {
+		//serial("Q");
+		printf("Python Script output: %s", output_line);
+		//fflush(stdout);
+		printf("Sending command\n");
+		if (sscanf(output_line, "Direction: %s", max_segment) == 1) {
+			if (strcmp(max_segment, "Left") == 0) {
+				serial("A");
+			} else if (strcmp(max_segment, "Right") == 0) {
+				serial("D");
+			} else if (strcmp(max_segment, "Top") == 0) {
+				serial("W");
+			} else {
+				serial("S");
+			}
+		}
+	}
+	pclose(fp);
+	return 0;
+}
+
 
 void timeout_handler(int sig) {
 		
