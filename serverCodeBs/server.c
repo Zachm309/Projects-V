@@ -29,9 +29,12 @@
 
 #define PORT 8080
 #define PYTHON_BUFFER 256
+//#define TIMEOUT 15
+
 
 char buffer[BUFSIZ];
 char python_output[PYTHON_BUFFER];
+//int client_socket;
 
 /*
  * this signal handler is used to catch the termination
@@ -52,7 +55,7 @@ int launch_stream() {
 	FILE *fp;
 	char command[BUFSIZ];
 	
-	snprintf(command, sizeof(command), "python3 /home/zpi/projects/Projects-V/CV-Code/main.py");
+	snprintf(command, sizeof(command), "python3 /home/zpi/project/Projects-V/CV-Code/main.py");
 	
 	fp = popen(command, "r");
 	if (fp == NULL) {
@@ -118,6 +121,15 @@ int serial(const char *message) {
 	return 0;
 }
 
+void timeout_handler(int sig) {
+		
+		printf("Timeout reached\n");
+		serial("stop");
+		//close(client_socket);
+		exit(0);
+	}
+
+
 
 
 int main (int argc, char *argv[])
@@ -136,6 +148,7 @@ int main (int argc, char *argv[])
 	 */
 
 	signal (SIGCHLD, SigCatcher);
+	//signal (SIGALRM, timeout_handler);
 
 	/*
 	 * obtain a socket for the server
@@ -145,6 +158,9 @@ int main (int argc, char *argv[])
 		printf ("grrr, can't get the server socket\n");
 		return 1;
 	}	/* endif */
+
+	
+
 
 	/*
 	 * initialize our server address info for binding purposes
@@ -186,7 +202,7 @@ int main (int argc, char *argv[])
 		 * accept a packet from the client
 		 */
 // Listening and found a client attempting to connect
-
+		
 //4. Accept
 		client_len = sizeof (client_addr);
 		if ((client_socket = accept (server_socket, 
@@ -208,24 +224,31 @@ int main (int argc, char *argv[])
 			 * read a block of info max BUFSIZE. compare 
 			 * against 3 commands: date, who, df
 			 */
-			//printf("test3\n");
+			//timeout
+			//close(server_socket);
+			//alarm(TIMEOUT);
+			
+			
 			memset(buffer, 0, BUFSIZ);
 			read(client_socket, buffer, BUFSIZ);
-			//char ack_mesg[] = "message received~!";
-			//write(client_socket, ack_mesg, strlen(ack_mesg));
 			
+				//alarm(TIMEOUT); //reset alarm
+			printf("Command recived: %s\n", buffer);
+			
+				
+				
+				//check is command is stream
+			if (strcmp(buffer, "stream") == 0) {
+				printf("Launching stream...\n");
+				launch_stream();
+			} else {
+			if (serial(buffer) != 0) {
+				printf("Failed to send serial command");
+				}	
+			}
 			/*
 			 * process command, and obtain outgoing data
 			 */
-
-			//Chnage commands to what they actually do
-				/* endif */
-
-			printf("Command recived: %s",buffer);
-			
-			if (serial(buffer) != 0) {
-				printf("Failed to send serial command");
-			}
 
 			/*
 			 * write data to client, close socket, and exit child app
@@ -233,8 +256,6 @@ int main (int argc, char *argv[])
 			//write(client_socket, "Response  inbound", 18);
 			write(client_socket, buffer, len);
 			close(client_socket);
-			return 0;
-			
 		} else {
 			/*
 			 * this is done by parent ONLY
