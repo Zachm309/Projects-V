@@ -16,7 +16,7 @@ sys.stdout.flush()
 
 
 #preform edge detection using canny
-def detect_edges(image, low_threshold=245, high_threshold=150):
+def detect_edges(image, low_threshold=150, high_threshold=150):
     return cv2.Canny(image, low_threshold, high_threshold)
 
 #Find contours on edge detected image
@@ -69,7 +69,7 @@ def highlight_sections(image, max_segment):
         top_left = (0, 0)
         bottom_right = (width, height // 2)
     
-    time.sleep(0.5)
+    time.sleep(0.1)
     print("Direction:", max_segment, flush=True)
     
     cv2.rectangle(highlighted_image, top_left, bottom_right, color, thickness)
