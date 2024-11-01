@@ -30,9 +30,6 @@
 
 #define PORT 8080
 #define PYTHON_BUFFER 256
-#define TIMEOUT 15
-#define TIMEOUT_MSG "Keep_Alive"
-
 //variable for timeout
 time_t last_msg;
 
@@ -48,21 +45,7 @@ char python_output[PYTHON_BUFFER];
  * wait for the child to exit)
  */
 
-
-void reset_timout() {
-	last_msg = time(NULL);
-}
-
 //function to check when last command is received
-void timeout_handler(int sig) {
-	time_t now = time(NULL);
-	if (difftime(now, last_msg) >= TIMEOUT) {
-		printf("Timeout reached... disconnecting client\n");
-		exit(0);
-	} else {
-		alarm(TIMEOUT); //reset the timeout interval
-	}
-}
 	
 void SigCatcher (int n)
 {
@@ -122,6 +105,12 @@ int serial(const char *message) {
 	return 0;
 }
 
+void timeout_handler(int signal_number) {
+	printf("No command recieved, stopping motors\n");
+	serial("s");
+}
+
+
 int launch_stream() {
 	
 	FILE *fp;
@@ -142,13 +131,13 @@ int launch_stream() {
 		printf("Sending command\n");
 		if (sscanf(output_line, "Direction: %s", max_segment) == 1) {
 			if (strcmp(max_segment, "Left") == 0) {
-				serial("A");
+				serial("a");
 			} else if (strcmp(max_segment, "Right") == 0) {
-				serial("D");
+				serial("d");
 			} else if (strcmp(max_segment, "Top") == 0) {
-				serial("W");
+				serial("w");
 			} else {
-				serial("S");
+				serial("c");
 			}
 		}
 	}
@@ -221,6 +210,7 @@ int main (int argc, char *argv[])
 	 * request, and the parent will continue to listen for the
 	 * next request
 	 */
+	signal(SIGALRM, timeout_handler);
 	while (1) {
 		
 		/*
@@ -237,7 +227,7 @@ int main (int argc, char *argv[])
 			return 4;
 		}	/* endif */
 
-		
+		printf("Client Connected!\n");
 
 		/*
 		 * fork a child
@@ -250,40 +240,42 @@ int main (int argc, char *argv[])
 			 * against 3 commands: date, who, df
 			 */
 			close(server_socket);
-			signal(SIGALRM, timeout_handler);
-			reset_timout();
-			alarm(TIMEOUT);
-			
-			memset(buffer, 0, BUFSIZ);
-			read(client_socket, buffer, BUFSIZ);
 			
 			
-			reset_timout();
-			if (strcmp(buffer, "Keep_Alive") == 0) {
-				write(client_socket, "Keep_Alive", strlen("Keep_Alive"));
-				continue;
-			}
+			while (1) {
 				
-			printf("Message recived from client: %s", buffer);
+				alarm(15);
+				memset(buffer, 0, BUFSIZ);
+				read(client_socket, buffer, BUFSIZ);
+				alarm(0);
+				
+				printf("Message recived from client: %s\n", buffer);
+						
 				//check is command is stream
-			if (strcmp(buffer, "stream") == 0) {
-				printf("Launching stream...\n");
-				launch_stream();
-			} else if (serial(buffer) != 0) {
-				perror("Failed to send serial command");
-			}
+				if (strcmp(buffer, "stream") == 0) {
+					serial("m");
+					printf("Launching stream...\n");
+					launch_stream();
+					serial("s");
+				} else if (serial(buffer) != 0) {
+					perror("Failed to send serial command");
+				} 
 			
-			/*
-			* process command, and obtain outgoing data
-			*/
+				/*
+				* process command, and obtain outgoing data
+				*/
 
-			/*
-			* write data to client, close socket, and exit child app
-			*/
-			//write(client_socket, "Response  inbound", 18);
-			write(client_socket, buffer, strlen(buffer));
+				/*
+				* write data to client, close socket, and exit child app
+				*/
+				//write(client_socket, "Response  inbound", 18);
+				write(client_socket, buffer, strlen(buffer));
+				
+			}//end while
 			
 			close(client_socket);
+			printf("Client Disconnected\n");
+			//serial("s");
 			exit(0);
 			
 		} else {
@@ -293,6 +285,7 @@ int main (int argc, char *argv[])
 			close(client_socket);
 		}	/* endif */
 	}	/* end while */
+	close(client_socket);
 	return 0;
 }	/* end main */
 
