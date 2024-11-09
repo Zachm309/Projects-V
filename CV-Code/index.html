@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<body>
+        	<h1>Live Streaming</h1>
+        	<div>
+			<h2>Video Stream</h2>
+			<img src="{{ url_for('video') }}" width="50%" id="videoFeed"/>
+        	</div>
+		<button onclick="toggleStream()">Toggle Stream Mode</button>
+
+		<script>
+			function toggleStream() {
+				fetch('/toggle')
+					.then(response => response.text())
+					.then(() => {
+						const videoElement = document.getElementById('videoFeed');
+						videoElement.src = "{{ url_for('video') }}" + "?" + new Date().getTime();
+					});			
+			}
+		</script>
+        </body>
+</html>
