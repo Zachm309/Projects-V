@@ -19,27 +19,38 @@ app = Flask(__name__)
 
 cap = cv2.VideoCapture(0)
 
-def generate_frames():
+show_regular_feed = True
+
+def generate_frames_edges():
     while True:
         
         success, img = cap.read()
         if not success:
             break
-            
+        
         gray = convert_to_grayscale(img)
         blurred = apply_gaussian_blur(gray)
-    
         edges = detect_edges(blurred)
-        
         max_segment, max_count, counts = analyze_image_segments(edges)
-        
         highlighted_frame = highlight_sections(edges.copy(), max_segment)
-        
         ret, buffer = cv2.imencode('.jpg', highlighted_frame)
+            
         frame = buffer.tobytes()
-        
         yield(b'--frame\r\n'
                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+                
+def generate_frames_regular():
+    while True:
+        
+        success, img = cap.read()
+        if not success:
+            break
+        ret, buffer = cv2.imencode('.jpg', img)
+            
+        frame = buffer.tobytes()
+        yield(b'--frame\r\n'
+                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        
 
 @app.route('/')
 def index():
@@ -47,8 +58,18 @@ def index():
     
 @app.route('/video')
 def video():
-    return Response(generate_frames(),mimetype='multipart/x-mixed-replace; boundary=frame')
+    global show_regular_feed
+    if show_regular_feed:
+        return Response(generate_frames_edges(),mimetype='multipart/x-mixed-replace; boundary=frame')
+    else:
+        return Response(generate_frames_regular(),mimetype='multipart/x-mixed-replace; boundary=frame')
     
+@app.route('/toggle')
+def toggle():
+    global show_regular_feed
+    show_regular_feed = not show_regular_feed
+    return "Toggle stream mode!", 200
+
 def main():
     app.run(host='0.0.0.0', port=5000, debug=False)
     
